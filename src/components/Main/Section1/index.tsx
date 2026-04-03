@@ -2,11 +2,13 @@ import { useRef, useState, useEffect } from "react"
 import Container from "@/components/Common/Container"
 import { Typography } from "@/components/Typography"
 import SearchIcon from "@/assets/icon/search.svg?react"
-import NoData from "@/assets/icon/nodata.svg?react"
 import XMark from "@/assets/icon/xMark.svg?react"
 import { useBookSearch } from "@/hooks/useBookSearch"
 import BookArea from "../BookArea"
+import Nodata from "@/components/Common/Nodata"
+import Loading from "@/components/Common/Loading"
 
+// 검색 기록 get
 const getHistory = (): string[] => {
     try {
         return JSON.parse(localStorage.getItem('search_history') ?? "[]")
@@ -16,12 +18,14 @@ const getHistory = (): string[] => {
     }
 }
 
+// 검색 기록 저장
 const saveHistory = (keyword: string) => {
     const prev = getHistory().filter((k) => k !== keyword)
     const next = [keyword, ...prev].slice(0, 8)
     localStorage.setItem('search_history', JSON.stringify(next))
 }
 
+// 검색 기록 삭제
 const removeHistory = (keyword: string) => {
     const next = getHistory().filter((k) => k !== keyword)
     localStorage.setItem('search_history', JSON.stringify(next))
@@ -33,7 +37,6 @@ const Section1 = () => {
     const [value, setValue] = useState<string>("")
     const [query, setQuery] = useState<string>("")
     const inputRef = useRef<HTMLInputElement>(null)
-
 
     const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useBookSearch(query)
     const books = data?.pages.flatMap((p) => p.documents) ?? []
@@ -105,6 +108,7 @@ const Section1 = () => {
     }
     return (
         <section className="pt-25">
+            {/* 상단 검색 부분 */}
             <Container className="flex flex-col gap-4">
                 <Typography
                     variant="title2"
@@ -180,11 +184,10 @@ const Section1 = () => {
                 </div>
             </Container>
 
+            {/* 하단 책 리스트 부분 */}
             <Container>
                 {isLoading ? (
-                    <div className="flex justify-center items-center mt-30">
-                        <p className="text-t-sub-title">검색 중...</p>
-                    </div>
+                    <Loading />
                 ) :
                     books && books.length > 0 ? (
                         <div className="mt-9">
@@ -197,6 +200,7 @@ const Section1 = () => {
                                     />
                                 ))
                             }
+                            {/* 옵져버 */}
                             <div ref={observerRef} className="h-1" />
                             {isFetchingNextPage && (
                                 <div className="flex justify-center py-4">
@@ -205,18 +209,7 @@ const Section1 = () => {
                             )}
                         </div>
                     ) : (
-                        <div className="flex flex-col justify-center items-center gap-6 mt-30">
-                            <NoData
-                                className="w-20 h-20"
-                                role="img"
-                                aria-label="데이터 없음"
-                            />
-                            <Typography
-                                variant="caption"
-                                title="검색된 결과가 없습니다."
-                                className="text-t-sub-title!"
-                            />
-                        </div>
+                        <Nodata title='검색된 결과가 없습니다.' />
                     )}
             </Container>
         </section>

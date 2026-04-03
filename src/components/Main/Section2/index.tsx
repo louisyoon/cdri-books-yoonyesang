@@ -1,17 +1,11 @@
 import { useState, useRef, useEffect } from "react"
 import Container from "@/components/Common/Container"
 import { Typography } from "@/components/Typography"
-import NoData from "@/assets/icon/nodata.svg?react"
 import { useLikedBooks } from "@/hooks/useLikedBooks"
 import BookArea from "../BookArea"
-
-const getLikes = (): string[] => {
-    try {
-        return JSON.parse(localStorage.getItem('like_books') ?? "[]")
-    } catch {
-        return []
-    }
-}
+import Nodata from "@/components/Common/Nodata"
+import { getLikes } from "@/function/function"
+import Loading from "@/components/Common/Loading"
 
 const Section2 = () => {
     const [isbns, setIsbns] = useState<string[]>(() => getLikes())
@@ -51,9 +45,7 @@ const Section2 = () => {
 
             <Container>
                 {isLoading ? (
-                    <div className="flex justify-center items-center mt-30">
-                        <p className="text-t-sub-title">불러오는 중...</p>
-                    </div>
+                    <Loading />
                 ) : books.length > 0 ? (
                     <div className="mt-9">
                         {books.map((book, idx) => (
@@ -71,20 +63,9 @@ const Section2 = () => {
                             </div>
                         )}
                     </div>
-                ) : (
-                    <div className="flex flex-col justify-center items-center gap-6 mt-30">
-                        <NoData
-                            className="w-20 h-20"
-                            role="img"
-                            aria-label="데이터 없음"
-                        />
-                        <Typography
-                            variant="caption"
-                            title="찜한 책이 없습니다."
-                            className="text-t-sub-title!"
-                        />
-                    </div>
-                )}
+                ) :
+                    <Nodata title='찜한 책이 없습니다.' />
+                }
             </Container>
         </section>
     )

@@ -1,18 +1,11 @@
-import type { IBook } from "@/api/kakaoBook"
 import { Typography } from "@/components/Typography"
 import CustomButton from "@/components/Common/CustomButton"
 import { useState, useEffect } from "react"
 import LikeOff from "@/assets/icon/likeOff.svg?react"
 import LikeOn from "@/assets/icon/likeOn.svg?react"
 import Arrow from "@/assets/icon/arrow.svg?react"
-
-const getLikes = (): string[] => {
-    try {
-        return JSON.parse(localStorage.getItem('like_books') ?? "[]")
-    } catch {
-        return []
-    }
-}
+import { getLikes } from "@/function/function"
+import type { IBook } from "@/types/book"
 
 const toggleLike = (isbn: string): boolean => {
     const prev = getLikes()
